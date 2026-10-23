@@ -2,9 +2,9 @@
 
 Experiment code for *Scalable Real-Time Power Management for Wireless Communication Networks*.
 
-The numerical experiments generate channel gains with ns-3. This repository currently contains that channel routine. Further experiment code will be added after review.
+The numerical experiments generate channel gains with ns-3. This repository currently contains that channel and its Python binding. Further experiment code will be added after review.
 
-## `ns3_channel_gains_scm`
+## `ns3_channel_gains.cc`
 
 ```c
 int ns3_channel_gains_scm(
@@ -19,6 +19,11 @@ The routine keeps one base-station node and one user node. For each user-antenna
 
 Each entry is the large-scale path gain times the sum of squared small-scale channel coefficients. The path gain comes from the UMa propagation model at 2 GHz with log-normal shadowing disabled. The base station uses a single 3GPP antenna element; the user antenna is isotropic. Base-station and user heights are 25 m and 1.5 m. Angles `tilt` and `az` are in degrees.
 
-`stream` is passed to `AssignStreams`. Link `k` in the call uses stream `stream + k`, so the same arguments and the same stream reproduce the same gains. The function returns 0 on success and 1 if a size or pointer argument is invalid.
+`stream` is an ns-3 random-stream index passed to `AssignStreams`. Link `k` in the call uses stream `stream + k`, so the same arguments and the same stream reproduce the same gains. A different stream is a different small-scale draw. The function returns 0 on success and 1 if a size or pointer argument is invalid.
 
-The file is compiled inside an ns-3 tree that provides the antenna, propagation, and spectrum modules.
+Compile the file inside an ns-3 tree that provides the antenna, propagation, and spectrum modules. The Python binding loads the resulting shared library; that binary is not part of this repository.
+
+## `ns3_channel.py`
+
+This module loads `libpm-ns3-gains.so` with `ctypes` and calls `ns3_channel_gains_scm`.
+
